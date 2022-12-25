@@ -1,20 +1,33 @@
+#dashboard.heroku.com/new-app
+#streamlit run Service_Assembly.py
+#https://bgremoval.streamlit.app/
+# cd C:\Users\user\Desktop\Education\IntelligentDocumentProcessing
+#https://www.google.com/search?q=streamlit&biw=1904&bih=952&tbm=vid&sxsrf=ALiCzsYjpEw1IYs9MM-txlwxeisg4NkI7Q%3A1671872547210&ei=I8CmY7XBDMKQrgTU7Z2QDA&ved=0ahUKEwj13qTK8pH8AhVCiIsKHdR2B8IQ4dUDCA0&uact=5&oq=streamlit&gs_lcp=Cg1nd3Mtd2l6LXZpZGVvEAMyBAgAEEMyBAgAEEMyBAgAEEMyBAgAEEMyBAgAEEMyBAgAEEMyBAgAEEMyBQgAEIAEMgUIABCABDIECAAQQ1AAWABgmgFoAHAAeACAAUmIAUmSAQExmAEAoAEBwAEB&sclient=gws-wiz-video#fpstate=ive&vld=cid:3392f1d3,vid:JwSS70SZdyM
+
+import streamlit as st
+
+st.write("""
+ Service_Assembly App
+ """)
+
 #1 Гугл диск
-from google.colab import drive
-drive.mount('/content/drive')
+#from google.colab import drive
+#drive.mount('/content/drive')
 
-repo_folder = '/content/drive/MyDrive/DeepLearning2/'
+repo_folder = 'C:\\Users\\user\\Desktop\\Education\\'
 
-reqs_path = repo_folder + 'IntelligentDocumentProcessing/requirements.txt '
-!pip3 install -r {reqs_path}
+reqs_path = repo_folder + 'IntelligentDocumentProcessing\\requirements.txt'
+#!pip3 install -r {reqs_path}
 
 import math
 
 import dill
-
+import numpy as np
 import sys
-base_folder = repo_folder + 'IntelligentDocumentProcessing/Resources/e_Service_Deployment/'  # import utils
+model_folder = repo_folder + 'IntelligentDocumentProcessing\\'
+base_folder = repo_folder + 'IntelligentDocumentProcessing\\Resources\\e_Service_Deployment\\'  # import utils /
 sys.path.append(base_folder)
-sys.path.append(repo_folder + 'IntelligentDocumentProcessing/Resources/')  # from a_Text_Detection.utils import
+sys.path.append(repo_folder + 'IntelligentDocumentProcessing\\Resources\\')  # from a_Text_Detection.utils import
 sys.path.append(repo_folder)  # from IntelligentDocumentProcessing.Resources.a_Text_Detection.utils import
 
 import torch
@@ -23,7 +36,7 @@ from typing import Union, List
 import albumentations as A
 from albumentations import BasicTransform, Compose, OneOf
 from albumentations.pytorch import ToTensorV2
-import numpy as np
+
 import torch.nn as nn
 
 from a_Text_Detection.utils import Postprocessor, DrawMore
@@ -68,7 +81,7 @@ def merge_predictions(document_predictions: List[Tuple[str, list]]) -> Tuple[str
     text = text.strip() 
     return text, markup
 
-image_fpath = base_folder+'ner_sample/821284f7-4c42-491e-b85d-9d37a2ce7a56.jpeg'
+image_fpath = model_folder+'/821284f7-4c42-491e-b85d-9d37a2ce7a56.jpeg'
 
 image = cv2.imread(image_fpath)
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -77,7 +90,7 @@ image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 device = 'cpu'#'cuda:0'
 max_image_size = 2048
 
-image_fpath = '/content/drive/MyDrive/github/IntelligentDocumentProcessing/Resources/e_Service_Deployment/ner_sample/821284f7-4c42-491e-b85d-9d37a2ce7a56.jpeg'
+image_fpath = model_folder+'821284f7-4c42-491e-b85d-9d37a2ce7a56.jpeg'
 #'./team_idp/ocr_service/ner_sample/821284f7-4c42-491e-b85d-9d37a2ce7a56.jpeg'
 
 image = cv2.imread(image_fpath)
@@ -288,7 +301,7 @@ class Pipeline:
         #pass
         self.device = "cpu"
 
-        line_model_path = '/content/drive/MyDrive/data/la_data/la.jit'
+        line_model_path = model_folder+'la.jit'
         self.line_model = torch.jit.load(line_model_path, map_location=torch.device(self.device))
         self.line_model.eval();
 
@@ -309,14 +322,14 @@ class Pipeline:
             max_number=1000
         )
         
-        with open('/content/drive/MyDrive/tmp/pkl/pf.pkl', 'rb') as r:
+        with open(model_folder+'pf.pkl', 'rb') as r:
             self.paragraph_finder = dill.load(r)
         
-        ocr_model_fpath = '/content/drive/MyDrive/first_iteration_20221107T212618/ocr.jit'
+        ocr_model_fpath = model_folder+'ocr.jit'
         self.ocr_model = torch.jit.load(ocr_model_fpath, map_location=torch.device(self.device))
         self.ocr_model.eval();
         
-        punct = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~«»№"
+        punct = " !\\"#$%&'()*+,-./:;<=>?@[\\\\]^_`{|}~«»№"
         digit = "0123456789"
         cr = "ЁАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяё"
         latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -324,7 +337,7 @@ class Pipeline:
 
         self.tokenizer = TokenizerForCTC(list(alphabet))
         
-        self.model = torch.jit.load("./drive/MyDrive/first_iteration_20221107T212618/ner_rured.jit")         
+        self.model = torch.jit.load(model_folder+'ner_rured.jit')         
 
     def predict(self, image) -> dict:
         """
@@ -368,14 +381,28 @@ class Pipeline:
             "entities": predicted_entities
         }  
 
+st.write("""
+  Проверка имплементации
+ """)
+
 ## Проверка имплементации
 pipe = Pipeline()
+
+st.write(pipe)
+
 model_result = pipe.predict(image)
 
+st.write("""
+  model_result
+ """)
+st.write(model_result)
+ 
 assert all([True if i in {"recognized_text", "entities"} else False for i in model_result.keys()]), "Some keys not found in model result"
+
 
 print(model_result)
 
+st.write(model_result)
 
 
 
